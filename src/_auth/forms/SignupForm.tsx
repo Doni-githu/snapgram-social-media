@@ -1,4 +1,3 @@
-import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import * as z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -6,16 +5,18 @@ import { useForm } from 'react-hook-form'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { useToast } from "@/components/ui/use-toast"
 import { Input } from "@/components/ui/input"
 import { SignUpValidation } from '@/lib/validation'
 import Loader from '@/components/shared/Loader'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useCreateUserAccount, useSignInAccount } from '@/lib/react-query/queriesAndMutations'
+import { useUserContext } from '@/context/AuthContext'
 
 type Type = 'username' | "name" | "email" | "password"
 interface ITypeFormField {
@@ -46,7 +47,11 @@ const array: ITypeFormField[] = [
 ]
 
 const SignupForm = () => {
-  const [isLoading] = useState(true)
+  const { toast } = useToast()
+  const { mutateAsync: createUserAccount, isPending: isCreatingUser } = useCreateUserAccount()
+  const { checkAuthUser } = useUserContext()
+  const { mutateAsync: signInAccount } = useSignInAccount()
+  const navigate = useNavigate()
   const form = useForm<z.infer<typeof SignUpValidation>>({
     resolver: zodResolver(SignUpValidation),
     defaultValues: {
@@ -56,10 +61,46 @@ const SignupForm = () => {
       password: ''
     }
   })
-  function onSubmit(values: z.infer<typeof SignUpValidation>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+
+
+
+  async function onSubmit(user: z.infer<typeof SignUpValidation>) {
+    try {
+      const newUser = await createUserAccount(user);
+
+      if (!newUser) {
+        toast({ title: "Sign up failed. Please try again.", });
+
+        return;
+      }
+
+      const session = await signInAccount({
+        email: user.email,
+        password: user.password,
+      });
+
+      if (!session) {
+        toast({ title: "Something went wrong. Please login your new account", });
+
+        navigate("/sign-in");
+
+        return;
+      }
+
+      const isLoggedIn = await checkAuthUser();
+
+      if (isLoggedIn) {
+        form.reset();
+
+        navigate("/");
+      } else {
+        toast({ title: "Login failed. Please try again.", });
+
+        return;
+      }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -74,23 +115,21 @@ const SignupForm = () => {
             <FormField
               control={form.control}
               name={item.title}
+              key={item.title}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>{item.title.charAt(0).toUpperCase() + item.title.slice(1)}</FormLabel>
                   <FormControl>
                     <Input type={item.type} className="shad-input" placeholder={item.title.charAt(0).toUpperCase() + item.title.slice(1)} {...field} />
                   </FormControl>
-                  <FormDescription>
-                    {item.description}
-                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}
             />
           ))}
 
-          <Button type="submit" disabled={isLoading} className="shad-button_primary">
-            {isLoading ? (
+          <Button type="submit" disabled={isCreatingUser} className="shad-button_primary">
+            {isCreatingUser ? (
               <div className="flex-center gap-2">
                 <Loader /> Loading...
               </div>
