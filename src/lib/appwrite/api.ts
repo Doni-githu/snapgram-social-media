@@ -70,8 +70,17 @@ export async function getCurrentUser() {
             appwriteConfig.userCollectionId,
             [Query.equal("accountId", currentAccount.$id)]
         )
-        if(!currentAccount) throw Error;
+        if (!currentAccount) throw Error;
         return currentUser.documents[0]
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function signOutAccount() {
+    try {   
+        const session = await account.deleteSession("current")
+        return session
     } catch (error) {
         console.log(error)
     }
