@@ -40,6 +40,10 @@ export type IUpdatePost = {
     tags?: string;
 };
 
+export type IPost = IUpdatePost & {
+    tags: string[]
+}
+
 export type IUser = {
     id: string;
     name: string;
