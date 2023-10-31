@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input"
 import { SignUpValidation } from '@/lib/validation'
 import Loader from '@/components/shared/Loader'
 import { Link, useNavigate } from 'react-router-dom'
-import { useCreateUserAccount, useSignInAccount } from '@/lib/react-query/queriesAndMutations'
+import { useCreateUserAccount, useSignInAccount } from '@/lib/react-query/queries'
 import { useUserContext } from '@/context/AuthContext'
 
 type Type = 'username' | "name" | "email" | "password"
