@@ -212,7 +212,7 @@ export async function savePost(postId: string, userId: string) {
         const updatedPost = await databases.updateDocument(
             appwriteConfig.databaseId,
             appwriteConfig.savesCollectionId,
-            ID.unique(),
+            ID.unique().toString(),
             {
                 user: userId,
                 post: postId
