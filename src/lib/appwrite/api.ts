@@ -357,3 +357,46 @@ export async function searchPosts(searchTerm: string) {
         console.log(error)
     }
 }
+
+export async function getUsers() {
+    try {
+        const users = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.userCollectionId,
+        )
+
+        if (!users) throw Error;
+
+        return users
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function getUserById(userId: string) {
+    try{
+        const user = await databases.getDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.userCollectionId,
+            userId,
+        )
+        
+        return user
+    }catch(error){
+        console.log(error)
+    }
+}
+
+export async function getSavedPosts(userId: string) {
+    try{
+        const saved = await databases.listDocuments(
+            appwriteConfig.databaseId,
+            appwriteConfig.savesCollectionId,
+            [Query.equal("user", userId)]
+        )
+
+        return saved
+    }catch(error){
+        console.log(error)
+    }
+}

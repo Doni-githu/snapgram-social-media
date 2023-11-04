@@ -1,8 +1,25 @@
 import { QueryClient, useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createPost, createUserAccount, deletePost, deleteSavePost, getCurrentUser, getInfinitePosts, getPostById, getRecentPosts, likePost, savePost, searchPosts, signInAccount, signOutAccount, updatePost } from "../appwrite/api"
+import {
+    createPost,
+    createUserAccount,
+    deletePost,
+    deleteSavePost,
+    getCurrentUser,
+    getInfinitePosts,
+    getPostById,
+    getRecentPosts,
+    getSavedPosts,
+    getUserById,
+    getUsers,
+    likePost,
+    savePost,
+    searchPosts,
+    signInAccount,
+    signOutAccount,
+    updatePost
+} from "../appwrite/api"
 import { INewPost, INewUser, IUpdatePost } from "@/types"
 import { QUERY_KEYS } from "./queryKeys"
-import { Models } from "appwrite"
 
 
 export const useCreateUserAccount = () => {
@@ -150,10 +167,11 @@ export const useGetPosts = () => {
     return useInfiniteQuery({
         queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
         queryFn: getInfinitePosts,
-        getNextPageParam: (lastPage: Models.DocumentList<Models.Document> | undefined) => {
+        getNextPageParam: (lastPage) => {
             if (lastPage && lastPage.documents.length === 0) {
-                return null;
+                return undefined;
             }
+
 
             const lastId = lastPage?.documents[lastPage?.documents.length - 1].$id;
             return lastId;
@@ -166,5 +184,29 @@ export const useSearchPost = (searchTerm: string) => {
         queryKey: [QUERY_KEYS.SEARCH_POSTS, searchTerm],
         queryFn: () => searchPosts(searchTerm),
         enabled: !!searchTerm
+    })
+}
+
+export const useGetUsers = () => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_USERS],
+        queryFn: getUsers,
+    })
+}
+
+export const useGetUserById = (userId: string) => {
+    return useQuery({
+        queryKey: [QUERY_KEYS.GET_USER_BY_ID, userId],
+        queryFn: () => getUserById(userId),
+        enabled: !!userId
+    })
+}
+
+
+export const useGetSavedPosts = (userId: string) => {
+    return useQuery({
+        queryKey: ['getAllSavedPost', userId],
+        queryFn: () => getSavedPosts(userId),
+        enabled: !!userId
     })
 }

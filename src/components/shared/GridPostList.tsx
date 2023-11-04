@@ -28,7 +28,7 @@ const GridPostList = ({ posts, showUser = true, showStats = true }: GridPostList
               </div>
             )}
 
-            {showStats && <PostStats post={post} userId={user.id} />}
+            {showStats && <PostStats showStats={showStats} showUser={showUser} post={post} userId={user.id} />}
           </div>
         </li>
       ))}

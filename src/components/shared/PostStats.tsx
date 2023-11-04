@@ -6,10 +6,12 @@ import { useEffect, useState } from "react"
 
 type PostStatsProps = {
     post: Models.Document,
-    userId: string
+    userId: string,
+    showUser: boolean,
+    showStats: boolean,
 }
 
-const PostStats = ({ post, userId }: PostStatsProps) => {
+const PostStats = ({ post, userId, showUser, showStats }: PostStatsProps) => {
     const likesList = post.likes.map((user: Models.Document) => user.$id) as string[]
     const [likes, setLikes] = useState<string[]>(likesList)
     const [isSaved, setIsSaved] = useState(false)
@@ -51,7 +53,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
     }
 
     return (
-        <div className='flex justify-between items-center z-20'>
+        <div className={`flex ${showUser ? "" : "w-full"} justify-between items-center z-20`}>
             <div className="flex gap-2 mr-5">
                 {isLikingLoading ? <Loader /> : <>
                     <img
