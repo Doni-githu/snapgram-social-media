@@ -1,3 +1,4 @@
+import GridPostList from "@/components/shared/GridPostList";
 import Loader from "@/components/shared/Loader";
 import { Button } from "@/components/ui/button";
 import { useUserContext } from "@/context/AuthContext";
@@ -36,21 +37,35 @@ const Profile = () => {
                 <p className="flex whitespace-nowrap small-medium">Edit Profile</p>
               </Link>
             </div>
-            <div className={`${currentUser.id === user.$id && "hidden"}`}>
-              <Button className="shad-button_primary px-8" variant="ghost">Follow</Button>
+          </div>
+          <div className="flex gap-8 items-center justify-center xl:justify-start z-20">
+            <div className="flex-center gap-2 items-center">
+              <p className="small-semibold lg:body-bold text-primary-500">{user.posts.length}</p>
+              <p className="small-semibold lg:base-medium text-light-2">Posts</p>
             </div>
           </div>
         </div>
       </div>
       <div className="flex max-w-5xl w-full">
-        <Link className={`profile-tab rounded-l-lg ${!url.includes("liked-posts") ? "!bg-dark-3" : 'false'}`} to={`/profile/${id}`}>
-          <img src={'/assets/icons/posts.svg'} alt={'post'} width="20" height="20" />
-          Posts
-        </Link>
-        <Link className={`profile-tab rounded-r-lg ${url.includes("liked-posts") ? "!bg-dark-3" : 'false'}`} to={`/profile/${id}/liked-posts`}>
-          <img src={'/assets/icons/like.svg'} alt={'like'} width="20" height="20" />
-          Liked Posts
-        </Link>
+        {currentUser.id === user.$id && (
+          <>
+            <Link className={`profile-tab rounded-l-lg ${!url.includes("liked-posts") ? "!bg-dark-3" : 'false'}`} to={`/profile/${id}`}>
+              <img src={'/assets/icons/posts.svg'} alt={'post'} width="20" height="20" />
+              Posts
+            </Link>
+            <Link className={`profile-tab rounded-r-lg ${url.includes("liked-posts") ? "!bg-dark-3" : 'false'}`} to={`/profile/${id}/liked-posts`}>
+              <img src={'/assets/icons/like.svg'} alt={'like'} width="20" height="20" />
+              Liked Posts
+            </Link>
+          </>
+        )}
+      </div>
+      <div className="w-full">
+        {!url.includes("liked-posts") ? (
+          <GridPostList posts={user.posts} showStats={currentUser.id !== user.$id} />
+        ) : currentUser.id === user.$id ? (
+          <GridPostList posts={user.liked} wFull={true} showStats={false} />
+        ) : null}
       </div>
     </div>
   )
