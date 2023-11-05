@@ -123,9 +123,9 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
                 />
                 <div className="flex gap-4 items-center justify-end">
                     <Button className="shad-button_dark_4" type="button" onClick={() => navigate(-1)}>Cancel</Button>
-                    <Button className="shad-button_primary whitespace-normal" type="submit">
+                    <Button className="shad-button_primary whitespace-normal" disabled={isLoadingUpdate} type="submit">
                         {isLoadingUpdate ? <>
-                            <Loader /> "Loading..."
+                            <Loader /> Loading...
                         </> :
                             "Update Profile"
                         }
