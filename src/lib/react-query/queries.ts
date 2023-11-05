@@ -16,10 +16,12 @@ import {
     searchPosts,
     signInAccount,
     signOutAccount,
-    updatePost
+    updatePost,
+    updateUser
 } from "../appwrite/api"
-import { INewPost, INewUser, IUpdatePost } from "@/types"
+import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types"
 import { QUERY_KEYS } from "./queryKeys"
+import { useUserContext } from "@/context/AuthContext"
 
 
 export const useCreateUserAccount = () => {
@@ -166,10 +168,11 @@ export const useDeletePost = () => {
 export const useGetPosts = () => {
     return useInfiniteQuery({
         queryKey: [QUERY_KEYS.GET_INFINITE_POSTS],
+        initialPageParam: 0,
         queryFn: getInfinitePosts,
-        getNextPageParam: (lastPage) => {
+        getNextPageParam: (lastPage: any) => {
             if (lastPage && lastPage.documents.length === 0) {
-                return undefined;
+                return null;
             }
 
 
@@ -208,5 +211,39 @@ export const useGetSavedPosts = (userId: string) => {
         queryKey: ['getAllSavedPost', userId],
         queryFn: () => getSavedPosts(userId),
         enabled: !!userId
+    })
+}
+
+export const useUpdateUser = () => {
+    const queryClient = useQueryClient()
+    const { setUser, user } = useUserContext()
+    return useMutation({
+        mutationFn: (user: IUpdateUser) => updateUser(user),
+        onSuccess(data, user2) {
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_USER_BY_ID, user2.userId],
+            })
+
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_USERS]
+            })
+
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_CURRENT_USER]
+            })
+
+            queryClient.invalidateQueries({
+                queryKey: [QUERY_KEYS.GET_USER_BY_ID, data?.$id]
+            })
+            console.log(data?.imageUrl)
+            setUser({
+                id: user.id,
+                username: user?.username,
+                name: data?.name,
+                imageUrl: data?.imageUrl,
+                bio: data?.bio,
+                email: user.email,
+            })
+        }
     })
 }

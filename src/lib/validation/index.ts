@@ -23,5 +23,5 @@ export const UpdateProfileValidation = z.object({
     file: z.custom<File[]>(),
     username: z.string(),
     email: z.string().email(),
-    bio: z.string()
+    bio: z.string().default('')
 })

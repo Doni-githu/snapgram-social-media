@@ -1,9 +1,7 @@
 import GridPostList from "@/components/shared/GridPostList"
 import Loader from "@/components/shared/Loader"
 import { useUserContext } from "@/context/AuthContext"
-import { useGetSavedPosts, useGetUserById } from "@/lib/react-query/queries"
-import { Models } from "appwrite"
-import { useParams } from "react-router-dom"
+import { useGetSavedPosts } from "@/lib/react-query/queries"
 
 const Saved = () => {
     const { user } = useUserContext()

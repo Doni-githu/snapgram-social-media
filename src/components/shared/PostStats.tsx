@@ -7,10 +7,10 @@ import { useEffect, useState } from "react"
 type PostStatsProps = {
     post: Models.Document,
     userId: string,
-    wFull: boolean
+    wFull?: boolean
 }
 
-const PostStats = ({ post, userId, wFull }: PostStatsProps) => {
+const PostStats = ({ post, userId, wFull = false }: PostStatsProps) => {
     const likesList = post.likes.map((user: Models.Document) => user.$id) as string[]
     const [likes, setLikes] = useState<string[]>(likesList)
     const [isSaved, setIsSaved] = useState(false)

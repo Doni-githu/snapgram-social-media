@@ -23,7 +23,7 @@ const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
     })
 
     useEffect(() => {
-        if(mediaUrl){
+        if (mediaUrl) {
             setFileUrl(mediaUrl)
         }
     }, [])

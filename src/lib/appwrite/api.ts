@@ -1,4 +1,4 @@
-import { INewPost, INewUser, IUpdatePost } from "@/types";
+import { INewPost, INewUser, IUpdatePost, IUpdateUser } from "@/types";
 import { ID, Query } from "appwrite";
 import { account, appwriteConfig, avatars, databases, storage } from "./config";
 
@@ -125,52 +125,6 @@ export async function createPost(post: INewPost) {
     }
 }
 
-export async function updatePost(post: IUpdatePost) {
-    const hasFileToUpdate = post.file.length > 0;
-    try {
-        let image = {
-            imageUrl: post.imageUrl,
-            imageId: post.imageId
-        }
-        if (hasFileToUpdate) {
-            const uploadedFile = await uploadFile(post.file[0]);
-            if (!uploadedFile) throw Error;
-            const fileUrl = getFilePreview(uploadedFile.$id);
-            if (!fileUrl) {
-                await deleteFile(uploadedFile.$id);
-                throw Error;
-            }
-
-            image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id }
-        }
-
-
-
-
-        const tags = post.tags?.replace(/ /g, "").split(",") || [];
-
-        const updatedPost = await databases.updateDocument(
-            appwriteConfig.databaseId,
-            appwriteConfig.postCollectionId,
-            post.postId,
-            {
-                caption: post.caption,
-                location: post.location,
-                tags: tags,
-                ...image
-            }
-        );
-
-        if (!updatedPost) {
-            await deleteFile(post.imageId);
-            throw Error;
-        }
-
-        return updatedPost;
-    } catch (error) {
-        console.log(error);
-    }
-}
 
 
 export async function uploadFile(file: File) {
@@ -374,21 +328,21 @@ export async function getUsers() {
 }
 
 export async function getUserById(userId: string) {
-    try{
+    try {
         const user = await databases.getDocument(
             appwriteConfig.databaseId,
             appwriteConfig.userCollectionId,
             userId,
         )
-        
+
         return user
-    }catch(error){
+    } catch (error) {
         console.log(error)
     }
 }
 
 export async function getSavedPosts(userId: string) {
-    try{
+    try {
         const saved = await databases.listDocuments(
             appwriteConfig.databaseId,
             appwriteConfig.savesCollectionId,
@@ -396,7 +350,96 @@ export async function getSavedPosts(userId: string) {
         )
 
         return saved
-    }catch(error){
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+export async function updatePost(post: IUpdatePost) {
+    const hasFileToUpdate = post.file.length > 0;
+    try {
+        let image = {
+            imageUrl: post.imageUrl,
+            imageId: post.imageId
+        }
+        if (hasFileToUpdate) {
+            const uploadedFile = await uploadFile(post.file[0]);
+            if (!uploadedFile) throw Error;
+            const fileUrl = getFilePreview(uploadedFile.$id);
+            if (!fileUrl) {
+                await deleteFile(uploadedFile.$id);
+                throw Error;
+            }
+
+            image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id }
+        }
+
+
+
+
+        const tags = post.tags?.replace(/ /g, "").split(",") || [];
+
+        const updatedPost = await databases.updateDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.postCollectionId,
+            post.postId,
+            {
+                caption: post.caption,
+                location: post.location,
+                tags: tags,
+                ...image
+            }
+        );
+
+        if (!updatedPost) {
+            await deleteFile(post.imageId);
+            throw Error;
+        }
+
+        return updatedPost;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+export async function updateUser(user: IUpdateUser) {
+    const hasFileToUpdate = user.file.length > 0
+    try {
+        let image = {
+            imageUrl: user.imageUrl,
+            imageId: user.imageId
+        }
+
+        if (hasFileToUpdate) {
+            const uploadedFile = await uploadFile(user.file[0]);
+            if (!uploadedFile) throw Error;
+            const fileUrl = getFilePreview(uploadedFile.$id);
+            if (!fileUrl) {
+                await deleteFile(uploadedFile.$id);
+                throw Error;
+            }
+
+            image = { ...image, imageUrl: fileUrl, imageId: uploadedFile.$id }
+        }
+
+        const updatedUser = await databases.updateDocument(
+            appwriteConfig.databaseId,
+            appwriteConfig.userCollectionId,
+            user.userId,
+            {
+                ...image,
+                name: user.name,
+                bio: user.bio,
+            }
+        );
+
+        if (!updatedUser) {
+            await deleteFile(image.imageId);
+            throw Error;
+        }
+
+        return updatedUser;
+    } catch (error) {
         console.log(error)
     }
 }

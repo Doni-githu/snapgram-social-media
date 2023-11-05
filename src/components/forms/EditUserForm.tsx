@@ -7,28 +7,68 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "../ui/input"
 import { Textarea } from "../ui/textarea"
 import { Button } from "../ui/button"
+import AvatarUploader from "../shared/AvatarUploader"
+import { toast } from "../ui/use-toast"
+import { useNavigate } from "react-router-dom"
+import { useUpdateUser } from "@/lib/react-query/queries"
+import Loader from "../shared/Loader"
 
 interface EditUserFormProps {
     user: Models.Document
 }
 
 const EditUserForm = ({ user }: EditUserFormProps) => {
+    const navigate = useNavigate()
+    const { mutateAsync: updateUser, isPending: isLoadingUpdate } = useUpdateUser()
     const form = useForm<z.infer<typeof UpdateProfileValidation>>({
         resolver: zodResolver(UpdateProfileValidation),
         defaultValues: {
             file: [],
             name: user ? user.name : "",
             username: user ? user.username : "",
-            email: user ? user.email : ""
+            email: user ? user.email : "",
+            bio: user ? user.bio : ""
         },
     })
 
     async function onSubmit(values: z.infer<typeof UpdateProfileValidation>) {
+        const updatedUser = await updateUser({
+            ...values,
+            userId: user.$id,
+            imageId: user?.imageId,
+            imageUrl: user?.imageUrl,
+            bio: values.bio ? values.bio : ""
+        })
+        console.log(updatedUser)
 
+        if (!updatedUser) {
+            return toast({
+                title: "Please try again"
+            })
+        }
+        // navigate(`/profile/${user.$id}`)
+        return
     }
+
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-7 w-full max-w-5xl mt-4">
+                <FormField
+                    control={form.control}
+                    name="file"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <AvatarUploader
+                                    fieldChange={field.onChange}
+                                    mediaUrl={user?.imageUrl.toString()}
+                                />
+                            </FormControl>
+                            <FormMessage className="shad-form_message" />
+                        </FormItem>
+                    )}
+                />
                 <FormField
                     control={form.control}
                     name="name"
@@ -82,8 +122,14 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
                     )}
                 />
                 <div className="flex gap-4 items-center justify-end">
-                    <Button className="shad-button_dark_4">Cancel</Button>
-                    <Button className="shad-button_primary whitespace-normal" type="submit">Update Profile</Button>
+                    <Button className="shad-button_dark_4" type="button" onClick={() => navigate(-1)}>Cancel</Button>
+                    <Button className="shad-button_primary whitespace-normal" type="submit">
+                        {isLoadingUpdate ? <>
+                            <Loader /> "Loading..."
+                        </> :
+                            "Update Profile"
+                        }
+                    </Button>
                 </div>
             </form>
         </Form>
