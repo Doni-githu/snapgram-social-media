@@ -20,6 +20,7 @@ const PostDetails = () => {
         <div className="post_details-card">
           <img
             src={post.imageUrl}
+            loading="lazy"
             alt="post-image"
             className="post_details-img" />
 

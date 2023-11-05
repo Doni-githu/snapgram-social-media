@@ -3,14 +3,14 @@ import { checkIsLiked } from '@/lib/utils'
 import { Models } from 'appwrite'
 import Loader from './Loader'
 import { useEffect, useState } from "react"
-
+import { memo } from "react"
 type PostStatsProps = {
     post: Models.Document,
     userId: string,
     wFull?: boolean
 }
 
-const PostStats = ({ post, userId, wFull = false }: PostStatsProps) => {
+const PostStats = memo(({ post, userId, wFull = false }: PostStatsProps) => {
     const likesList = post.likes.map((user: Models.Document) => user.$id) as string[]
     const [likes, setLikes] = useState<string[]>(likesList)
     const [isSaved, setIsSaved] = useState(false)
@@ -81,6 +81,6 @@ const PostStats = ({ post, userId, wFull = false }: PostStatsProps) => {
             </div>
         </div>
     )
-}
+})
 
 export default PostStats

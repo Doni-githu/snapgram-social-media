@@ -1,5 +1,7 @@
-import PostForm from "@/components/forms/PostForm"
+import Loader from "@/components/shared/Loader"
+import { lazy, Suspense } from "react"
 
+const PostForm = lazy(() => import("@/components/forms/PostForm"))
 const CreatePost = () => {
   return (
     <div className="flex flex-1">
@@ -8,13 +10,16 @@ const CreatePost = () => {
           <img
             src="/assets/icons/add-post.svg"
             alt="add"
+            loading="lazy"
             width={36}
             height={36}
           />
           <h2 className="h3-bold md:h2-bold text-left w-full">Create post</h2>
         </div>
 
-        <PostForm action="Create" />
+        <Suspense fallback={<Loader />}>
+          <PostForm action="Create" />
+        </Suspense>
       </div>
     </div>
   )

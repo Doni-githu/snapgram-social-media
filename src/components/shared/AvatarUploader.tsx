@@ -35,6 +35,7 @@ const AvatarUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
                     <div className="flex items-center gap-4">
                         <img
                             src={fileUrl}
+                            loading="lazy"
                             alt="image"
                             className='h-24 w-24 rounded-full object-cover object-top'
                         />

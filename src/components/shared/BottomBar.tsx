@@ -1,6 +1,7 @@
+import { memo } from "react"
 import { bottombarLinks } from "@/constants";
 import { Link, useLocation } from "react-router-dom"
-const BottomBar = () => {
+const BottomBar = memo(() => {
     const { pathname } = useLocation()
     return (
         <section className="bottom-bar">
@@ -26,6 +27,6 @@ const BottomBar = () => {
             })}
         </section>
     )
-}
+})
 
 export default BottomBar

@@ -5,7 +5,6 @@ import { useGetUserById } from "@/lib/react-query/queries";
 import { Link, useParams } from "react-router-dom";
 
 
-
 const Profile = () => {
   const { user: currentUser } = useUserContext()
   const url = location.href

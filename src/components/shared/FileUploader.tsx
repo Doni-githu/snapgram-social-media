@@ -37,6 +37,7 @@ const FileUploader = ({ fieldChange, mediaUrl }: FileUploaderProps) => {
                         <img
                             src={fileUrl}
                             alt="image"
+                            loading="lazy"
                             className='file_uploader-img md:object-center'
                         />
                     </div>

@@ -46,7 +46,7 @@ const EditUserForm = ({ user }: EditUserFormProps) => {
                 title: "Please try again"
             })
         }
-        // navigate(`/profile/${user.$id}`)
+        navigate(`/profile/${user.$id}`)
         return
     }
 

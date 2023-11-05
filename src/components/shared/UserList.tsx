@@ -2,11 +2,11 @@ import { useGetUsers } from '@/lib/react-query/queries'
 import { Button } from '../ui/button'
 import { Link } from 'react-router-dom'
 import Loader from './Loader'
-
-const UserList = () => {
+import { memo } from 'react'
+const UserList = memo(() => {
     const { data: users, isFetching: isLoadingUser } = useGetUsers()
-    
-    return (    
+
+    return (
         <ul className='user-grid'>
             {isLoadingUser && !users ? <Loader /> : (
                 users?.documents.map((item) => (
@@ -15,6 +15,7 @@ const UserList = () => {
                             <img
                                 src={item.imageUrl}
                                 alt="creator"
+                                loading="lazy"
                                 className="rounded-full w-14 h-14" />
                             <div className="flex-center flex-col gap-1">
                                 <p className="base-medium text-light-1 text-center line-clamp-1">{item.name}</p>
@@ -29,6 +30,7 @@ const UserList = () => {
             )}
         </ul>
     )
-}
+})
+
 
 export default UserList

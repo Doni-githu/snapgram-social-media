@@ -1,7 +1,9 @@
-import PostForm from "@/components/forms/PostForm"
 import Loader from "@/components/shared/Loader"
 import { useGetPostById } from "@/lib/react-query/queries"
 import { useParams } from "react-router-dom"
+import { lazy, Suspense } from "react"
+
+const PostForm = lazy(() => import("@/components/forms/PostForm"))
 
 const EditPost = () => {
   const params = useParams()
@@ -20,8 +22,9 @@ const EditPost = () => {
           />
           <h2 className="h3-bold md:h2-bold text-left w-full">Edit post</h2>
         </div>
-
-        <PostForm action="Update" post={post} />
+        <Suspense fallback={<Loader />}>
+          <PostForm action="Update" post={post} />
+        </Suspense>
       </div>
     </div>
   )
