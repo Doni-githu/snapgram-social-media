@@ -12,5 +12,5 @@ export default defineConfig({
       "@": path.join(__dirname, "src"),
     },
   },
-  base: '/snapgram-social-media/'
+  // base: '/snapgram-social-media/'
 })
